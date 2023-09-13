@@ -1,7 +1,5 @@
 package DemoQa;
 
-import java.io.File;
-
 public class DemoQaHomePageTestData {
 
     public String testLastName = "Test";
@@ -12,9 +10,9 @@ public class DemoQaHomePageTestData {
 
     public String testMobile = "0987654321";
 
-    public String testDateOfBirth = "25 Dec 2000";
+    public String testDateOfBirth;
 
-    public String testPicture = new File("./test.jpg").getAbsolutePath();
+    public String testPicture = "test.jpg";
 
     public String testSubjects = "TestForTest";
 
@@ -25,4 +23,7 @@ public class DemoQaHomePageTestData {
     public String testCity = "Noida";
 
     public String testModalWindowLogo = "Thanks for submitting the form";
+
+    public String testGender = "Female";
+
 }

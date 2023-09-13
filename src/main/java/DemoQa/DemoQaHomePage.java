@@ -6,6 +6,7 @@ import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,8 @@ public class DemoQaHomePage {
     WebDriver driver;
 
     public DemoQaHomePageTestData testData;
+
+    public String testDateOfBirth;
 
     @FindBy(id = "firstName")
     public
@@ -32,11 +35,11 @@ public class DemoQaHomePage {
     public
     WebElement GenderSelectMale;
 
-    @FindBy(id = "#genterWrapper > * div:nth-child(2) > label")
+    @FindBy(css = "#genterWrapper > * div:nth-child(2) > label")
     public
     WebElement GenderSelectFemale;
 
-    @FindBy(id = "#genterWrapper > * div:nth-child(3) > label")
+    @FindBy(css = "#genterWrapper > * div:nth-child(3) > label")
     public
     WebElement GenderSelectOther;
 
@@ -104,9 +107,43 @@ public class DemoQaHomePage {
         elementToText.sendKeys(Keys.ENTER);
     }
 
+    public String getTestData() {
+        String Data = DateOfBirthField.getAttribute("value");
+        switch (Data.substring(3, 7)) {
+            case "Sep " -> Data = Data.replaceAll("Sep ", "September,");
+            case "Oct " -> Data = Data.replaceAll("Oct ", "October,");
+            case "Nov " -> Data = Data.replaceAll("Nov ", "November,");
+            case "Dec " -> Data = Data.replaceAll("Dec ", "December,");
+            case "Jan " -> Data = Data.replaceAll("Jan ", "January,");
+            case "Feb " -> Data = Data.replaceAll("Feb ", "February,");
+            case "Mar " -> Data = Data.replaceAll("Mar ", "March,");
+            case "Apr " -> Data = Data.replaceAll("Apr ", "April,");
+            case "May " -> Data = Data.replaceAll("May ", "May,");
+            case "Jun " -> Data = Data.replaceAll("Jun ", "June,");
+            case "Jul " -> Data = Data.replaceAll("Jul ", "July,");
+            case "Aug " -> Data = Data.replaceAll("Aug ", "August,");
+        }
+        return Data;
+    }
+
+    public void SelectGender() {
+        testData = new DemoQaHomePageTestData();
+        switch (testData.testGender) {
+            case "Male" -> GenderSelectMale.click();
+            case "Female" -> GenderSelectFemale.click();
+            case "Other" -> GenderSelectOther.click();
+            default -> throw new InvalidArgumentException("Вы ввели не допустимое наименование гендера: "
+                    + testData.testGender + ", допустимые значения : Male, Female, Other");
+        }
+    }
+
     public void scrollToDown() {
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("scroll(0, 250);");
+    }
+
+    public String pathForFile(String fileName) {
+        return new File("./" + fileName).getAbsolutePath();
     }
 
     public Map<String, String> GiveAllDataFromModalWin() {
@@ -120,16 +157,16 @@ public class DemoQaHomePage {
 
     public void fullFillForm(WebDriverWait wait) {
         testData = new DemoQaHomePageTestData();
-
         FirstNameField.sendKeys(testData.testFirstName);
         LastNameField.sendKeys(testData.testLastName);
         EmailField.sendKeys(testData.testEmail);
-        GenderSelectMale.click();
+        SelectGender();
         MobileField.sendKeys(testData.testMobile);
         DateOfBirthField.click();
         DateOfBirthTodayDate.click();
+        testDateOfBirth = getTestData();
         SubjectsField.sendKeys(testData.testSubjects);
-        PictureDownloadButton.sendKeys(testData.testPicture);
+        PictureDownloadButton.sendKeys(pathForFile(testData.testPicture));
         CurrentAddressField.sendKeys(testData.testCurrentAddress);
         scrollToDown();
         selectByName(SelectStateButton, SelectStateField, testData.testState);
@@ -137,4 +174,5 @@ public class DemoQaHomePage {
         wait.until(ExpectedConditions.visibilityOf(SubmitButton));
         SubmitButton.click();
     }
+
 }
