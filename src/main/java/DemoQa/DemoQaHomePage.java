@@ -1,13 +1,13 @@
 package DemoQa;
 
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.Keys;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class DemoQaHomePage {
@@ -48,6 +48,11 @@ public class DemoQaHomePage {
     public
     WebElement DateOfBirthField;
 
+    @FindBy(css = "div.react-datepicker__day.react-datepicker__day--013.react-datepicker__day--selected.react" +
+            "-datepicker__day--today")
+    public
+    WebElement DateOfBirthTodayDate;
+
     @FindBy(css = "#subjectsInput")
     public
     WebElement SubjectsField;
@@ -80,20 +85,20 @@ public class DemoQaHomePage {
     public
     WebElement SubmitButton;
 
-    @FindBy(css = "")
-    public
-    WebElement RegModalWindow;
-
-    @FindBy(css = "")
+    @FindBy(id = "example-modal-sizes-title-lg")
     public
     WebElement RegModalWindowTitle;
+
+    String XpathModalWinDataValue = "(//tr/td[2])";
+
+    String XpathModalWinDataLabel = "(//tr/td[1])";
 
     public DemoQaHomePage(WebDriver driver) {
         this.driver = driver;
         PageFactory.initElements(driver, this);
     }
 
-    public void SelectByName(WebElement elementToClick, WebElement elementToText, String text) {
+    public void selectByName(WebElement elementToClick, WebElement elementToText, String text) {
         elementToClick.click();
         elementToText.sendKeys(text);
         elementToText.sendKeys(Keys.ENTER);
@@ -104,7 +109,16 @@ public class DemoQaHomePage {
         jse.executeScript("scroll(0, 250);");
     }
 
-    public void FullFillForm(WebDriverWait wait) {
+    public Map<String, String> GiveAllDataFromModalWin() {
+        Map<String, String> Map = new HashMap<>();
+        for (int i = 0; i < 10; i++) {
+            Map.put((driver.findElement(By.xpath((XpathModalWinDataLabel + "[" + (i + 1) + "]")))).getText(),
+                    (driver.findElement(By.xpath((XpathModalWinDataValue + "[" + (i + 1) + "]")))).getText());
+        }
+        return Map;
+    }
+
+    public void fullFillForm(WebDriverWait wait) {
         testData = new DemoQaHomePageTestData();
 
         FirstNameField.sendKeys(testData.testFirstName);
@@ -112,20 +126,15 @@ public class DemoQaHomePage {
         EmailField.sendKeys(testData.testEmail);
         GenderSelectMale.click();
         MobileField.sendKeys(testData.testMobile);
-        DateOfBirthField.clear();
-        DateOfBirthField.sendKeys(testData.testDateOfBirth);
-        //   Thread.sleep(20000);
+        DateOfBirthField.click();
+        DateOfBirthTodayDate.click();
         SubjectsField.sendKeys(testData.testSubjects);
         PictureDownloadButton.sendKeys(testData.testPicture);
         CurrentAddressField.sendKeys(testData.testCurrentAddress);
         scrollToDown();
-        SelectByName(SelectStateButton, SelectStateField, testData.testState);
-        SelectByName(SelectCityButton, SelectCityField, testData.testCity);
+        selectByName(SelectStateButton, SelectStateField, testData.testState);
+        selectByName(SelectCityButton, SelectCityField, testData.testCity);
         wait.until(ExpectedConditions.visibilityOf(SubmitButton));
         SubmitButton.click();
-
-        //Thread.sleep(20000);
-
     }
-
 }

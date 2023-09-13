@@ -22,5 +22,7 @@ public class DemoQaHomePageTestData {
 
     public String testState = "NCR";
 
-    public String testCity = "No";
+    public String testCity = "Noida";
+
+    public String testModalWindowLogo = "Thanks for submitting the form";
 }
