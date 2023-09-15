@@ -1,10 +1,13 @@
-package DemoQa;
+package test;
 
+import io.qameta.allure.Step;
+import org.junit.Assert;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
+
 
 import java.io.File;
 import java.util.HashMap;
@@ -51,8 +54,7 @@ public class DemoQaHomePage {
     public
     WebElement DateOfBirthField;
 
-    @FindBy(css = "div.react-datepicker__day.react-datepicker__day--013.react-datepicker__day--selected.react" +
-            "-datepicker__day--today")
+    @FindBy(css = ".react-datepicker__day--selected.react-datepicker__day--today")
     public
     WebElement DateOfBirthTodayDate;
 
@@ -101,12 +103,14 @@ public class DemoQaHomePage {
         PageFactory.initElements(driver, this);
     }
 
+    @Step("Выбор элемента из списка")
     public void selectByName(WebElement elementToClick, WebElement elementToText, String text) {
         elementToClick.click();
         elementToText.sendKeys(text);
         elementToText.sendKeys(Keys.ENTER);
     }
 
+    @Step("Получение выбранной даты из календаря")
     public String getTestData() {
         String Data = DateOfBirthField.getAttribute("value");
         switch (Data.substring(3, 7)) {
@@ -126,6 +130,7 @@ public class DemoQaHomePage {
         return Data;
     }
 
+    @Step("Выбрать пол на странице")
     public void SelectGender() {
         testData = new DemoQaHomePageTestData();
         switch (testData.testGender) {
@@ -137,15 +142,18 @@ public class DemoQaHomePage {
         }
     }
 
+    @Step("Прокрутка страницы в самый низ")
     public void scrollToDown() {
         JavascriptExecutor jse = (JavascriptExecutor) driver;
         jse.executeScript("scroll(0, 250);");
     }
 
+    @Step("Составление абсолютного пути для файла {fileName}")
     public String pathForFile(String fileName) {
         return new File("./" + fileName).getAbsolutePath();
     }
 
+    @Step("Получить все данные из модального окна регистрации")
     public Map<String, String> GiveAllDataFromModalWin() {
         Map<String, String> Map = new HashMap<>();
         for (int i = 0; i < 10; i++) {
@@ -155,24 +163,41 @@ public class DemoQaHomePage {
         return Map;
     }
 
+    @Step("Заполнение всей формы регистрации")
     public void fullFillForm(WebDriverWait wait) {
         testData = new DemoQaHomePageTestData();
-        FirstNameField.sendKeys(testData.testFirstName);
-        LastNameField.sendKeys(testData.testLastName);
-        EmailField.sendKeys(testData.testEmail);
+        fullField(FirstNameField, testData.testFirstName);
+        fullField(LastNameField, testData.testLastName);
+        fullField(EmailField, testData.testEmail);
         SelectGender();
-        MobileField.sendKeys(testData.testMobile);
-        DateOfBirthField.click();
-        DateOfBirthTodayDate.click();
-        testDateOfBirth = getTestData();
-        SubjectsField.sendKeys(testData.testSubjects);
-        PictureDownloadButton.sendKeys(pathForFile(testData.testPicture));
-        CurrentAddressField.sendKeys(testData.testCurrentAddress);
+        fullField(MobileField, testData.testMobile);
+        elementClick(DateOfBirthField);
+        elementClick(DateOfBirthTodayDate);
+        testData.testDateOfBirth = getTestData();
+        fullField(SubjectsField, testData.testSubjects);
+        fullField(PictureDownloadButton, pathForFile(testData.testPicture));
+        fullField(CurrentAddressField, testData.testCurrentAddress);
         scrollToDown();
         selectByName(SelectStateButton, SelectStateField, testData.testState);
         selectByName(SelectCityButton, SelectCityField, testData.testCity);
         wait.until(ExpectedConditions.visibilityOf(SubmitButton));
-        SubmitButton.click();
+        elementClick(SubmitButton);
     }
+
+    @Step("Проверка соответствия введенного элемента {actualElement} и полученного {gotElement}")
+    public void checkField(String gotElement, String actualElement) {
+        Assert.assertEquals(gotElement, actualElement);
+    }
+
+    @Step("Ввод в поле значения {writeInElement}")
+    public void fullField(WebElement element, String writeInElement) {
+        element.sendKeys(writeInElement);
+    }
+
+    @Step("Клик по элементу {element}")
+    public void elementClick(WebElement element) {
+        element.click();
+    }
+
 
 }

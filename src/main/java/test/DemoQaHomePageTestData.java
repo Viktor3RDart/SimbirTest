@@ -1,4 +1,4 @@
-package DemoQa;
+package test;
 
 public class DemoQaHomePageTestData {
 
