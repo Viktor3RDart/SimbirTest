@@ -173,7 +173,7 @@ public class DemoQaHomePage {
         fullField(MobileField, testData.testMobile);
         elementClick(DateOfBirthField);
         elementClick(DateOfBirthTodayDate);
-        testData.testDateOfBirth = getTestData();
+        testDateOfBirth = getTestData();
         fullField(SubjectsField, testData.testSubjects);
         fullField(PictureDownloadButton, pathForFile(testData.testPicture));
         fullField(CurrentAddressField, testData.testCurrentAddress);
